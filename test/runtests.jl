@@ -3,7 +3,8 @@ using XLSXasJSON
 using JSONPointer
 using OrderedCollections
 using JSON3
-using JSON
+
+include("tables_inteface.jl")
 
 data_path = joinpath(@__DIR__, "data")
 
@@ -111,7 +112,7 @@ end
     prefix = split(basename(f), ".")[1]
     for s in sheetnames(jwb)[1:2]
         file = joinpath(data_path, "$(prefix)_$(s).json")
-        json_data = JSON.parse(read(file, String))
+        json_data = JSON3.read(read(file, String))
         for i in 1:length(jwb[s])
             @test jwb[s][i] == json_data[i]
         end

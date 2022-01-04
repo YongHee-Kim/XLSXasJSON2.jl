@@ -1,7 +1,7 @@
 using Test
 using XLSXasJSON
-using Tables
 using JSONPointer
+using Tables
 
 data_path = joinpath(@__DIR__, "data")
 
