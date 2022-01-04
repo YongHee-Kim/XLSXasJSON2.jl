@@ -3,7 +3,7 @@
 ![Run CI on master](https://github.com/YongHee-Kim/XLSXasJSON.jl/workflows/Run%20CI%20on%20master/badge.svg)
 [![Converage](https://github.com/YongHee-Kim/XLSXasJSON.jl/blob/gh-pages/dev/coverage/badge_linecoverage.svg)](https://YongHee-Kim.github.io/XLSXasJSON.jl/dev/coverage/index.html)
 
-**Documentation**: [Docs](https://YongHee-Kim.github.io/XLSXasJSON.jl/stable/)
+**Documentation**: [Docs](https://yonghee-kim.github.io/XLSXasJSON.jl/dev/)
 <!-- [![][docs-latest-img]][docs-latest-url] -->
 
 Inspired by [excel-as-json](https://github.com/stevetarver/excel-as-json)
