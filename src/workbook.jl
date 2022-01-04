@@ -107,13 +107,15 @@ function Base.summary(io::IO, jwb::JSONWorkbook)
 end
 function Base.show(io::IO, jwb::JSONWorkbook)
     summary(io, jwb)
-    @printf(io, "%6s %-15s\n", "index", "name")
-    println(io, "-"^(6+1+15+1))
+    @printf(io, "%5s %-16s %-13s\n", "index", "name", "size")
+    println(io, "-"^(5+1+16+1+13))
 
     index = sort(OrderedDict(jwb.sheetindex.lookup); byvalue = true)
     for el in index
-        name = string(el[1])
-        @printf(io, "%6s %-15s\n", el[2], string(el[1]))
+        name = el[1]
+        _size = size(jwb[name]) |> x -> string(x[1], "x", x[2])
+
+        @printf(io, "%5s %-16s %-13s\n", el[2], name, _size)
     end
 end
 

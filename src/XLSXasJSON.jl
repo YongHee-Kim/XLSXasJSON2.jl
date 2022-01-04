@@ -4,6 +4,8 @@ using Printf, REPL
 using JSON3, StructTypes
 using JSONPointer
 using JSONPointer: Pointer
+using Tables
+using PrettyTables
 using XLSX
 using OrderedCollections
 
@@ -12,6 +14,7 @@ include("jsonpointer.jl")
 include("worksheet.jl")
 include("workbook.jl")
 include("writer.jl")
+include("tables.jl")
 
 export JSONWorkbook, JSONWorksheet,
         hassheet, sheetnames,

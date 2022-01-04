@@ -1,9 +1,9 @@
 function write(file::Union{String, IO}, jws::JSONWorksheet; pretty = true, drop_null = false)
     open(file, "w") do io
         if pretty
-            JSON3.pretty(io, data(jws))
+            JSON3.pretty(io, Tables.rows(jws))
         else
-            JSON3.write(io, data(jws))
+            JSON3.write(io, Tables.rows(jws))
         end
         # drop null array such as [null, null, ....] 
         if drop_null

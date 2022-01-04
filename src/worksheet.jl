@@ -157,7 +157,7 @@ function collect_cell(p::Pointer{T}, cell, delim) where T
     return val
 end
 
-data(jws::JSONWorksheet) = getfield(jws, :data)
+# data(jws::JSONWorksheet) = getfield(jws, :data)
 xlsxpath(jws::JSONWorksheet) = getfield(jws, :xlsxpath)
 sheetnames(jws::JSONWorksheet) = getfield(jws, :sheetname)
 Base.keys(jws::JSONWorksheet) = jws.pointer
@@ -175,15 +175,15 @@ function Base.haskey(jws::JSONWorksheet, key::Pointer)
     return false
 end
 
-Base.iterate(jws::JSONWorksheet) = iterate(data(jws))
-Base.iterate(jws::JSONWorksheet, i) = iterate(data(jws), i)
+Base.iterate(jws::JSONWorksheet) = iterate(Tables.rows(jws))
+Base.iterate(jws::JSONWorksheet, i) = iterate(Tables.rows(jws), i)
 
 Base.size(jws::JSONWorksheet) = (length(jws.data), length(jws.pointer))
 function Base.size(jws::JSONWorksheet, d)
     d == 1 ? length(jws.data) : 
     d == 2 ? length(jws.pointer) : throw(DimensionMismatch("only 2 dimensions of `JSONWorksheets` object are measurable"))
 end
-Base.length(jws::JSONWorksheet) = length(data(jws))
+Base.length(jws::JSONWorksheet) = length(Tables.rows(jws))
 
 StructTypes.StructType(::JSONWorksheet) = StructTypes.ArrayType()
 
@@ -195,14 +195,6 @@ StructTypes.StructType(::JSONWorksheet) = StructTypes.ArrayType()
 Base.getindex(jws::JSONWorksheet, i) = getindex(jws.data, i)
 Base.getindex(jws::JSONWorksheet, ::Colon, ::Colon) = getindex(jws, eachindex(jws.data), eachindex(jws.pointer))
 Base.getindex(jws::JSONWorksheet, row_ind, ::Colon) = getindex(jws, row_ind, eachindex(jws.pointer))
-
-Base.firstindex(jws::JSONWorksheet) = firstindex(jws.data)
-Base.lastindex(jws::JSONWorksheet) = lastindex(jws.data) 
-function Base.lastindex(jws::JSONWorksheet, i::Integer) 
-    i == 1 ? lastindex(jws.data) : 
-    i == 2 ? lastindex(jws.pointer) : 
-    throw(DimensionMismatch("JSONWorksheet only has two dimensions"))
-end
 
 function Base.getindex(jws::JSONWorksheet, row_ind::Integer, col_ind::Integer)
     p = keys(jws)[col_ind]
@@ -235,7 +227,6 @@ end
 
 function Base.getindex(jws::JSONWorksheet, row_ind::Integer, col_ind::Pointer)
     row = jws[row_ind]
-    
     return row[col_ind]
 end
 @inline function Base.getindex(jws::JSONWorksheet, row_inds, p::Pointer)
@@ -261,6 +252,14 @@ function Base.setindex!(jws::JSONWorksheet, value::Vector, p::Pointer)
 end
 function Base.setindex!(jws::JSONWorksheet, value, i::Integer, p::Pointer) 
     jws[i][p] = value
+end
+
+Base.firstindex(jws::JSONWorksheet) = firstindex(jws.data)
+Base.lastindex(jws::JSONWorksheet) = lastindex(jws.data) 
+function Base.lastindex(jws::JSONWorksheet, i::Integer) 
+    i == 1 ? lastindex(jws.data) : 
+    i == 2 ? lastindex(jws.pointer) : 
+    throw(DimensionMismatch("JSONWorksheet only has two dimensions"))
 end
 
 """
@@ -317,8 +316,8 @@ function Base.sort!(jws::JSONWorksheet, key; kwargs...)
     sort!(jws, Pointer(key); kwargs...)
 end
 function Base.sort!(jws::JSONWorksheet, pointer::Pointer; kwargs...)
-    sorted_idx = sortperm(map(el -> el[pointer], data(jws)); kwargs...)
-    jws.data = data(jws)[sorted_idx]
+    sorted_idx = sortperm(map(el -> el[pointer], Tables.rows(jws)); kwargs...)
+    jws.data = Tables.rows(jws)[sorted_idx]
     return jws
 end
 
@@ -327,13 +326,17 @@ function Base.summary(io::IO, jws::JSONWorksheet)
         basename(xlsxpath(jws)), sheetnames(jws))
 end
 function Base.show(io::IO, jws::JSONWorksheet)
-    summary(io, jws)
-    # TODO truncate based on screen size
-    print(io, "row 1 => ")
-    print(io, JSON3.pretty(jws[1]))
-    if length(jws) > 1
-        print("...")
-        print(io, "row $(length(jws)) => ")
-        print(io, JSON3.write(jws[end]))
+    # By default, we align the columns to the left unless they are numbers, checks first row to determine datatype
+    alignment = fill(:l, size(jws, 2))
+    
+    for i in 1:size(jws, 2)
+        if isa(jws[1, i], Number)
+            alignment[i] = :r
+        end
     end
+        
+    summary(io, jws)
+    pretty_table(io, Tables.matrix(jws);
+        header = pointer_to_colname.(Tables.columnnames(jws)), 
+        alignment = alignment)
 end
