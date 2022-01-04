@@ -20,7 +20,7 @@ makedocs(
 )
 
 deploydocs(
-    repo   = "github.com/devsisters/XLSXasJSON.jl.git",
+    repo   = "github.com/YongHee-Kim/XLSXasJSON.jl.git",
     target = "build",
     deps   = copy_coverage(),
     make   = nothing
