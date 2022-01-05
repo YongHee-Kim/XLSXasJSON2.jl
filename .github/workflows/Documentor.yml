@@ -8,6 +8,14 @@ on:
   pull_request:
 
 jobs:
+  check_ongoingjob: 
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cancel ongoing documentation builds for previous commits
+      uses: styfle/cancel-workflow-action@0.6.0
+      with:
+        access_token: ${{ github.token }}
+
   report_testcoverage:
     runs-on: ubuntu-latest
     steps:
@@ -30,32 +38,17 @@ jobs:
             targetdir: 'docs/src/coverage' # REQUIRED # The directory where the generated report should be saved.
             reporttypes: 'HtmlInline;Badges;TextSummary' # The output formats and scope (separated by semicolon) 
             verbosity: 'Info' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
-            tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.            
-  docs:
-      name: Documentation
-      runs-on: ubuntu-latest
-      steps:
-        # Cancel ongoing documentation build if pushing to branch again before the previous
-        # build is finished.
-        - name: Cancel ongoing documentation builds for previous commits
-          uses: styfle/cancel-workflow-action@0.6.0
-          with:
-            access_token: ${{ github.token }}
-
-        # Build docs
-        - uses: actions/checkout@v2
-        - uses: julia-actions/setup-julia@v1
-          with:
-            version: '1'
-        - name: Instantiate and install dependencies
-          run: |
-            julia --project=docs -e '
-                using Pkg
-                Pkg.develop(PackageSpec(path=pwd()))
-                Pkg.instantiate()'
-        - name: Generate documentation and deploy
-          env: # needed for pushing to gh-pages branch
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-          run:
-            julia --project=docs docs/make.jl
+            tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.      
+      # generate Documentor      
+      - name: Instantiate and install dependencies
+        run: |
+          julia --project=docs -e '
+              using Pkg
+              Pkg.develop(PackageSpec(path=pwd()))
+              Pkg.instantiate()'
+      - name: Generate documentation and deploy
+        env: # needed for pushing to gh-pages branch
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+        run:
+          julia --project=docs docs/make.jl
