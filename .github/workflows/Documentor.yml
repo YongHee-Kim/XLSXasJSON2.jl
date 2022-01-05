@@ -22,19 +22,20 @@ jobs:
         with:
           files: lcov.info
   report_coverage:
-      - name: Setup .NET Core # Required to execute ReportGenerator
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 6.0.101
+      steps:
+        - name: Setup .NET Core # Required to execute ReportGenerator
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: 6.0.101
 
-      - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.0.2
-        with:
-            reports: 'lcov.info' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-            targetdir: 'docs/src/coverage' # REQUIRED # The directory where the generated report should be saved.
-            reporttypes: 'HtmlInline;Badges;TextSummary' # The output formats and scope (separated by semicolon) 
-            verbosity: 'Info' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
-            tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.            
+        - name: ReportGenerator
+          uses: danielpalme/ReportGenerator-GitHub-Action@5.0.2
+          with:
+              reports: 'lcov.info' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+              targetdir: 'docs/src/coverage' # REQUIRED # The directory where the generated report should be saved.
+              reporttypes: 'HtmlInline;Badges;TextSummary' # The output formats and scope (separated by semicolon) 
+              verbosity: 'Info' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
+              tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.            
   docs:
       name: Documentation
       runs-on: ubuntu-latest
