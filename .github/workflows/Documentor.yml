@@ -11,14 +11,13 @@ jobs:
   report_testcoverage:
     runs-on: ubuntu-latest
     steps:
-      - name: RunTests
-        uses: actions/checkout@v2
-        uses: julia-actions/setup-julia@latest
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@latest
         with:
           version: '1.7'
-        uses: julia-actions/julia-buildpkg@latest
-        uses: julia-actions/julia-runtest@latest
-        uses: julia-actions/julia-processcoverage@v1
+      - uses: julia-actions/julia-buildpkg@latest
+      - uses: julia-actions/julia-runtest@latest
+      - uses: julia-actions/julia-processcoverage@v1
       - name: Setup .NET Core # Required to execute ReportGenerator
         uses: actions/setup-dotnet@v1
         with:
