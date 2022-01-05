@@ -1,5 +1,6 @@
 using Documenter, XLSXasJSON
 
+# copy coverage report to build folder for Documentor.jl to take along to `gh-pages` branch 
 function copy_coverage()
   source = joinpath(@__DIR__, "src/coverage")
   target = joinpath(@__DIR__, "build/coverage")
