@@ -8,8 +8,7 @@
 
 
 ## Acknowledgement
-As it is stated in the [license](./LICENSE), this package is developed with resources from [Devsisters Corp.](https://github.com/Devsisters) and inspired by the design of [excel-as-json](https://github.com/stevetarver/excel-as-json)
-
+Portions of project were developed under the support of [Devsisters Corp.](https://github.com/Devsisters). And inspired by the design of [excel-as-json](https://github.com/stevetarver/excel-as-json)
 
 ## Usage
 Parse Excel xlsx files into a Julia data structure to write them as a JSON encoded file. 
@@ -21,6 +20,3 @@ Designated row or colum must be standardized [JSONPointer](https://tools.ietf.or
 ```julia
 pkg> add XLSXasJSON
 ```
-
-# Acknowledgement
-As it is stated in the [license](./LICENSE), this package is developed with resources from [Devsisters Corp.](https://github.com/Devsisters)
