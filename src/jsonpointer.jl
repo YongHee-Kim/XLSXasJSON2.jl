@@ -18,6 +18,7 @@ function _column_to_pointer(token_string::AbstractString)::Pointer
         return Pointer(token_string)
     end
 end
+_column_to_pointer(token) = _column_to_pointer(string(token))
 
 function jsontype_to_juliatype(t)
     if t == "string"
