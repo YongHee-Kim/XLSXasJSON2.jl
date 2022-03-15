@@ -28,12 +28,6 @@ data_path = joinpath(@__DIR__, "data")
     @test jws[3]["array_int"] == [900]
     @test jws[3]["array_float"] == [900.0]
 
-    #example2
-    jws = JSONWorksheet(f, "Sheet2")
-    io = IOBuffer()
-    JSON3.write(io, jws) 
-    String(take!(io)) == replace("""[{"color":"red","value":"#f00"},{"color":"green","value":"#0f0"},{"color":"blue","value":"#00f"},{"color":"cyan","value":"#0ff"},{"color":"magenta","value":"#f0f"},{"color":"yellow","value":"#ff0"},{"color":"black","value":"#000"}]""", "\n"=>"")
-
     #example5
     jws = JSONWorksheet(f, "Sheet3")
     @test isa(jws[1]["batters"]["batter"], Array)
@@ -64,7 +58,6 @@ data_path = joinpath(@__DIR__, "data")
     @test jws[1]["thumbnail"]["width"] == 32
     @test jws[1]["thumbnail"]["height"] == 32
 end
-
 
 @testset "JSONWorkbook - deleteat!" begin
     xf = joinpath(data_path, "othercase.xlsx")
@@ -106,6 +99,17 @@ end
     f = joinpath(data_path, "example.xlsx")
     jwb = JSONWorkbook(f)
 
+    #write to IO
+    b = replace("""[{"color":"red","value":"#f00"},{"color":"green","value":"#0f0"},{"color":"blue","value":"#00f"},{"color":"cyan","value":"#0ff"},{"color":"magenta","value":"#f0f"},{"color":"yellow","value":"#ff0"},{"color":"black","value":"#000"}]""", "\n"=>"")
+    io = IOBuffer()
+
+    XLSXasJSON.write(io, jwb["Sheet2"]; pretty=false) 
+    @test String(take!(io)) == b
+
+    XLSXasJSON.write(io, jwb["Sheet2"]; pretty=true) 
+    a = String(take!(io))
+    @test replace(a, r"\t|\n| " => "") ==  b
+
     XLSXasJSON.write(data_path, jwb)
 
     # cannot test equality if data contains missing value
@@ -127,6 +131,8 @@ end
     for s in sheetnames(jwb)
         @test jwb[s].pointer == jwb2[s].pointer
     end
+
+    f = joinpath(data_path, "example.xlsx")
 end
 
 @testset "JSONWorksheet - merge" begin
@@ -215,7 +221,8 @@ end
 
     @test jws[1, 1:2] == [1 "a"]
     @test jws[1, 1:3] == permutedims([1,  "a",  ["A", "100", "B"]])
-    @test jws[1, 1:end] == jws[1, 1:4]
+    @test jws[1, :] == jws[1, 1:end]
+    @test jws[2, :] == jws[2, 1:4]
     @test jws[:, :] == jws[1:2, 1:4] == jws[1:end, 1:end]
     @test size(jws[:]) == size(jws.data)
 
@@ -312,7 +319,6 @@ end
     @test jws[1][j"/color"] == "black"
 
 end
-
 
 @testset "Asserts" begin
     xf = joinpath(data_path, "assert.xlsx")
