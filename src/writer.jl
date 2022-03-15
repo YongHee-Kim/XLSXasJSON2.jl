@@ -1,15 +1,19 @@
-function write(file::Union{String, IO}, jws::JSONWorksheet; pretty = true, drop_null = false)
+function write(file::AbstractString, jws::JSONWorksheet; kwargs...)
     open(file, "w") do io
-        if pretty
-            JSON3.pretty(io, Tables.rows(jws))
-        else
-            JSON3.write(io, Tables.rows(jws))
-        end
-        # drop null array such as [null, null, ....] 
-        if drop_null
-            replace!(io, r"(\"[\w]*\":null,)|(,?\"[\w]*\":null)" => "")
-        end
+        write(io, jws; kwargs...)
     end
+end
+function write(io::IO, jws::JSONWorksheet; pretty = true, drop_null = false)
+    if pretty
+        JSON3.pretty(io, Tables.rows(jws))
+    else
+        JSON3.write(io, Tables.rows(jws))
+    end
+    # drop null array such as [null, null, ....] 
+    if drop_null
+        replace!(io, r"(\"[\w]*\":null,)|(,?\"[\w]*\":null)" => "")
+    end
+    return io
 end
 
 function write(path::String, jwb::JSONWorkbook; kwargs...)
