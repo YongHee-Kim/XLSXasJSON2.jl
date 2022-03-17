@@ -1,20 +1,20 @@
 ﻿Summary
-  Generated on: 02/24/2022 - 08:06:28
+  Generated on: 03/17/2022 - 13:13:46
   Parser: LCovParser
   Assemblies: 1
   Classes: 7
   Files: 7
-  Line coverage: 73.8%
-  Covered lines: 319
-  Uncovered lines: 113
-  Coverable lines: 432
-  Total lines: 784
+  Line coverage: 74.2%
+  Covered lines: 323
+  Uncovered lines: 112
+  Coverable lines: 435
+  Total lines: 788
 
-Default                73.8%
+Default                74.2%
   src/index.jl         27.8%
   src/jsonpointer.jl   71.1%
   src/tables.jl        88.8%
   src/workbook.jl      65.6%
   src/worksheet.jl     92.9%
-  src/writer.jl        92.5%
+  src/writer.jl        96.6%
   src/XLSXasJSON.jl         
