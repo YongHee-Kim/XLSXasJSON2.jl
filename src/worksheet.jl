@@ -69,7 +69,7 @@ function JSONWorksheet(xlsxpath, sheet; kwargs...)
 end
 
 function eachrow_to_jsonarray(data::Array{T,2}, pointers, delim) where T
-    json = Array{OrderedDict,1}(undef, size(data, 1) - 1)
+    json = Array{PointerDict,1}(undef, size(data, 1) - 1)
     Threads.@threads for i in 1:length(json)
         json[i] = row_to_jsonarray(data[i + 1, :], pointers, delim)
     end
@@ -77,7 +77,7 @@ function eachrow_to_jsonarray(data::Array{T,2}, pointers, delim) where T
 end
 
 function row_to_jsonarray(row, pointers, delim)
-    x = OrderedDict{String,Any}()
+    x = PointerDict()
     for (col, p) in enumerate(pointers)
         x[p] = collect_cell(p, row[col], delim)
     end
@@ -89,7 +89,7 @@ function squeezerow_to_jsonarray(data::Array{T,2}, pointers, delim) where T
         U = Vector{eltype(p)}; Pointer{U}(p.tokens)
     end, pointers)
 
-    squzzed_json = OrderedDict{String, Any}()
+    squzzed_json = PointerDict()
     @inbounds for (col, p) in enumerate(pointers)
         val = map(i -> collect_cell(p, data[i + 1, :][col], delim), 1:size(data, 1) - 1)
         squzzed_json[arr_pointer[col]] = val

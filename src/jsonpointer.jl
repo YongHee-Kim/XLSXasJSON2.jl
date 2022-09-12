@@ -30,7 +30,7 @@ function jsontype_to_juliatype(t)
     elseif t == "integer" 
         return Int
     elseif t == "object"
-        return OrderedCollections.OrderedDict{String,Any}
+        return OrderedDict{String,Any}
     elseif t == "array"
         return Vector{Any}
     elseif t == "boolean"
