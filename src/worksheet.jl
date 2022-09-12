@@ -185,7 +185,6 @@ function Base.size(jws::JSONWorksheet, d)
 end
 Base.length(jws::JSONWorksheet) = length(Tables.rows(jws))
 
-StructTypes.StructType(::JSONWorksheet) = StructTypes.ArrayType()
 
 ########################################################################
 ##

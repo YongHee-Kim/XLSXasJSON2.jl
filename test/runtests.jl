@@ -2,7 +2,6 @@ using Test
 using XLSXasJSON
 using JSONPointer
 using OrderedCollections
-using JSON3
 
 include("tables_inteface.jl")
 
