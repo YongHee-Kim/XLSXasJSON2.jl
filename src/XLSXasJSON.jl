@@ -1,13 +1,13 @@
 module XLSXasJSON
 
 using Printf, REPL
-using JSON3, StructTypes
+using JSON
 using JSONPointer
 using JSONPointer: Pointer
 using Tables
 using PrettyTables
-using XLSX
 using OrderedCollections
+using XLSX
 
 include("index.jl")
 include("jsonpointer.jl")

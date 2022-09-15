@@ -3,11 +3,11 @@ function write(file::AbstractString, jws::JSONWorksheet; kwargs...)
         write(io, jws; kwargs...)
     end
 end
-function write(io::IO, jws::JSONWorksheet; pretty = true, drop_null = false)
-    if pretty
-        JSON3.pretty(io, Tables.rows(jws))
+function write(io::IO, jws::JSONWorksheet; indent = 2, drop_null = false)
+    if indent > 0 
+        JSON.print(io, Tables.rows(jws), indent)
     else
-        JSON3.write(io, Tables.rows(jws))
+        JSON.print(io, Tables.rows(jws))
     end
     # drop null array such as [null, null, ....] 
     if drop_null

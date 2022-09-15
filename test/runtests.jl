@@ -2,7 +2,7 @@ using Test
 using XLSXasJSON
 using JSONPointer
 using OrderedCollections
-using JSON3
+using JSON
 
 include("tables_inteface.jl")
 
@@ -103,10 +103,10 @@ end
     b = replace("""[{"color":"red","value":"#f00"},{"color":"green","value":"#0f0"},{"color":"blue","value":"#00f"},{"color":"cyan","value":"#0ff"},{"color":"magenta","value":"#f0f"},{"color":"yellow","value":"#ff0"},{"color":"black","value":"#000"}]""", "\n"=>"")
     io = IOBuffer()
 
-    XLSXasJSON.write(io, jwb["Sheet2"]; pretty=false) 
+    XLSXasJSON.write(io, jwb["Sheet2"]; indent=0) 
     @test String(take!(io)) == b
 
-    XLSXasJSON.write(io, jwb["Sheet2"]; pretty=true) 
+    XLSXasJSON.write(io, jwb["Sheet2"]; indent=2) 
     a = String(take!(io))
     @test replace(a, r"\t|\n| " => "") ==  b
 
@@ -116,7 +116,7 @@ end
     prefix = split(basename(f), ".")[1]
     for s in sheetnames(jwb)[1:2]
         file = joinpath(data_path, "$(prefix)_$(s).json")
-        json_data = JSON3.read(read(file, String))
+        json_data = JSON.parsefile(file; dicttype=OrderedDict)
         for i in 1:length(jwb[s])
             @test jwb[s][i] == json_data[i]
         end

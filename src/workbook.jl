@@ -3,7 +3,7 @@
     JSONWorkbook(file::AbstractString; start_line = 1)
 
 `start_line` of each sheets are considered as JSONPointer for data structure. 
-And each sheets are pared to `Array{OrderedDict, 1}` 
+And each sheets are pared to `Array{PointerDict, 1}` 
 
 # Constructors
 ```julia
