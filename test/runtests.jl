@@ -4,9 +4,8 @@ using JSONPointer
 using OrderedCollections
 using JSON
 
-include("tables_inteface.jl")
-
 data_path = joinpath(@__DIR__, "data")
+include("tables_inteface.jl")
 
 # testdata
 @testset "Adobe Spry Examples" begin
