@@ -17,15 +17,15 @@ JSONWorksheet("Example.xlsx", 1)
 
 """
 mutable struct JSONWorksheet
-    xlsxpath::String
+    source::String
     pointer::Array{Pointer,1}
     data::Array{T,1} where T 
     sheetname::String
 end
-function JSONWorksheet(xlsxpath, sheet, arr; 
+function JSONWorksheet(source, sheet, arr; 
                         delim=";", squeeze=false)
     arr = dropemptyrange(arr)
-    @assert !isempty(arr) "'$(xlsxpath)!$(sheet)' don't have valid column names, try change optional argument'start_line'"
+    @assert !isempty(arr) "'$(source)!$(sheet)' don't have valid column names, try change optional argument'start_line'"
 
     pointer = _column_to_pointer.(arr[1, :])
     real_keys = map(el -> el.tokens, pointer)
@@ -39,7 +39,7 @@ function JSONWorksheet(xlsxpath, sheet, arr;
     else 
         data = eachrow_to_jsonarray(arr, pointer, delim)
     end
-    JSONWorksheet(normpath(xlsxpath), pointer, data, String(sheet))
+    JSONWorksheet(normpath(source), pointer, data, String(sheet))
 end
 function JSONWorksheet(xf::XLSX.XLSXFile, sheet;
                        start_line=1, 
@@ -59,10 +59,10 @@ function JSONWorksheet(xf::XLSX.XLSXFile, sheet;
         end
     end
 
-    JSONWorksheet(xf.filepath, sheet, ws; delim=delim, squeeze=squeeze)
+    JSONWorksheet(xf.source, sheet, ws; delim=delim, squeeze=squeeze)
 end
-function JSONWorksheet(xlsxpath, sheet; kwargs...)
-    xf = XLSX.readxlsx(xlsxpath)
+function JSONWorksheet(source, sheet; kwargs...)
+    xf = XLSX.readxlsx(source)
     x = JSONWorksheet(xf, sheet; kwargs...)
     close(xf)
     return x
@@ -158,7 +158,7 @@ function collect_cell(p::Pointer{T}, cell, delim) where T
 end
 
 # data(jws::JSONWorksheet) = getfield(jws, :data)
-xlsxpath(jws::JSONWorksheet) = getfield(jws, :xlsxpath)
+xlsxpath(jws::JSONWorksheet) = getfield(jws, :source)
 sheetnames(jws::JSONWorksheet) = getfield(jws, :sheetname)
 Base.keys(jws::JSONWorksheet) = jws.pointer
 function Base.haskey(jws::JSONWorksheet, key::Pointer) 
@@ -297,7 +297,7 @@ function Base.merge(a::JSONWorksheet, b::JSONWorksheet, key::Pointer)
             _a[p] = _b[p]
         end
     end
-    JSONWorksheet(a.xlsxpath, pointers, data, a.sheetname)
+    JSONWorksheet(a.source, pointers, data, a.sheetname)
 end
 function Base.append!(a::JSONWorksheet, b::JSONWorksheet)
     ak = map(el -> el.tokens, keys(a)) 

@@ -20,7 +20,7 @@ arguments are applied to all Worksheets within Workbook.
 
 """
 mutable struct JSONWorkbook
-    xlsxpath::AbstractString
+    source::AbstractString
     sheets::Vector{JSONWorksheet}
     sheetindex::Index
 end
@@ -28,7 +28,7 @@ end
 function JSONWorkbook(xf::XLSX.XLSXFile, v::Vector{JSONWorksheet})
     wsnames = sheetnames.(v)
     index = Index(wsnames)
-    JSONWorkbook(xf.filepath, v, index)
+    JSONWorkbook(xf.source, v, index)
 end
 # same kwargs for all sheets
 function JSONWorkbook(xf::XLSX.XLSXFile, sheets = XLSX.sheetnames(xf); kwargs...)
@@ -41,8 +41,8 @@ function JSONWorkbook(xf::XLSX.XLSXFile, sheets = XLSX.sheetnames(xf); kwargs...
     JSONWorkbook(xf, v)
 end
 # Different Kwargs per sheet
-function JSONWorkbook(xlsxpath::AbstractString, sheets, kwargs_per_sheet::Dict)
-    xf = XLSX.readxlsx(xlsxpath)
+function JSONWorkbook(source::AbstractString, sheets, kwargs_per_sheet::Dict)
+    xf = XLSX.readxlsx(source)
 
     v = Array{JSONWorksheet, 1}(undef, length(sheets))
     @inbounds for (i, s) in enumerate(sheets)
@@ -52,12 +52,12 @@ function JSONWorkbook(xlsxpath::AbstractString, sheets, kwargs_per_sheet::Dict)
 
     JSONWorkbook(xf, v)
 end
-function JSONWorkbook(xlsxpath, sheets; kwargs...)
-    xf = XLSX.readxlsx(xlsxpath)
+function JSONWorkbook(source, sheets; kwargs...)
+    xf = XLSX.readxlsx(source)
     JSONWorkbook(xf, sheets; kwargs...)
 end
-function JSONWorkbook(xlsxpath; kwargs...)
-    xf = XLSX.readxlsx(xlsxpath)
+function JSONWorkbook(source; kwargs...)
+    xf = XLSX.readxlsx(source)
     JSONWorkbook(xf; kwargs...)
 end
 
@@ -65,7 +65,7 @@ end
 hassheet(jwb::JSONWorkbook, s::AbstractString) = haskey(jwb.sheetindex, s)
 hassheet(jwb::JSONWorkbook, s::Symbol) = haskey(jwb.sheetindex, string(s))
 sheetnames(jwb::JSONWorkbook) = names(jwb.sheetindex)
-xlsxpath(jwb::JSONWorkbook) = jwb.xlsxpath
+xlsxpath(jwb::JSONWorkbook) = jwb.source
 
 getsheet(jwb::JSONWorkbook, i) = jwb.sheets[i]
 getsheet(jwb::JSONWorkbook, s::AbstractString) = getsheet(jwb, jwb.sheetindex[s])

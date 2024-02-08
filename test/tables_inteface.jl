@@ -3,8 +3,6 @@ using XLSXasJSON
 using JSONPointer
 using Tables
 
-data_path = joinpath(@__DIR__, "data")
-
 @testset "Tables.jl integration" begin 
     f = joinpath(data_path, "example.xlsx")
     jws = JSONWorksheet(f, "Sheet1")
